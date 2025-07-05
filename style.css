@@ -1,0 +1,40 @@
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  color: #000;
+  margin: 0;
+  padding: 0;
+}
+header {
+  background-color: #6a0dad;
+  color: white;
+  padding: 1em;
+}
+nav a {
+  margin: 0 1em;
+  color: white;
+  text-decoration: none;
+}
+main {
+  padding: 2em;
+}
+footer {
+  background-color: #000;
+  color: white;
+  text-align: center;
+  padding: 1em;
+}
+.button, button {
+  background-color: #6a0dad;
+  color: white;
+  padding: 0.5em 1em;
+  border: none;
+  margin: 0.5em 0;
+  cursor: pointer;
+}
+.book {
+  border: 1px solid #ddd;
+  padding: 1em;
+  margin-bottom: 1em;
+}
