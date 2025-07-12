@@ -2,27 +2,41 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Liaread - Accueil</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liaread</title>
+  <style>
+    body { font-family: sans-serif; background: #f6f6f9; color: #333; margin: 0; padding: 0; }
+    header { background: #5e2b97; color: white; padding: 1em; text-align: center; }
+    .book-card { margin: 2em auto; padding: 1em; background: white; max-width: 400px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    button { background: #5e2b97; color: white; border: none; padding: 0.5em 1em; margin: 0.5em 0; cursor: pointer; }
+    .search-bar { text-align: center; margin: 2em 0; }
+    input[type='text'] { padding: 0.5em; width: 80%; max-width: 300px; }
+  </style>
 </head>
 <body>
   <header>
     <h1>Liaread</h1>
-    <nav>
-      <a href="index.html">Accueil</a>
-      <a href="ebooks.html">Ebooks</a>
-      <a href="auteur.html">Créer un compte auteur</a>
-    </nav>
+    <p>Plateforme de vente d'ebooks multi-auteurs</p>
   </header>
-  <main>
-    <h2>Bienvenue sur Liaread</h2>
-    <p>Plateforme de lecture d'ebooks multi-auteurs</p>
-    <a href="auteur.html" class="button">Créer un compte auteur</a>
-  </main>
-  <footer>
-    <p>© 2025 Liaread</p>
-  </footer>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Rechercher un livre...">
+  </div>
+
+  <section class="book-card">
+    <h2>Aime moi</h2>
+    <p>Auteur : GwenA</p>
+    <p>Prix : 2500f</p>
+    <button onclick="alert('Extrait en cours de chargement...')">Lire un extrait</button><br>
+    <button onclick="alert('Redirection vers paiement...')">Payer maintenant</button>
+  </section>
+
+  <div style="text-align: center; margin: 2em;">
+    <button onclick="alert('Redirection vers formulaire de soumission')">Soumettre une œuvre</button><br>
+    <button onclick="alert('Redirection vers création de compte auteur')">Créer un compte auteur</button><br>
+    <button onclick="alert('Lien partagé !')">Partager le site</button>
+  </div>
 </body>
 </html>
+    
