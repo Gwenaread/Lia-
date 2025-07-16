@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tableau de bord Auteur - Liaread</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js"></script>
+  <script type="module" src="firebase.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Tableau de bord Auteur</h1>
+    <button onclick="logout()">Se déconnecter</button>
+  </header>
+
+  <main>
+    <section id="author-books">
+      <h2>Mes Livres</h2>
+      <div id="books-list"></div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { app } from './firebase.js';
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs,
+      doc,
+      deleteDoc
+    } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js";
+
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    function logout() {
+      signOut(auth).then(() => {
+        window.location.href = "index.html";
+      });
+    }
+
+    async function loadBooks(userEmail) {
+      const q = query(collection(db, "books"), where("authorEmail", "==", userEmail));
+      const snapshot = await getDocs(q);
+      const listDiv = document.getElementById("books-list");
+      listDiv.innerHTML = "";
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const bookId = docSnap.id;
+
+        const div = document.createElement("div");
+        div.className = "book-item";
+        div.style.border = "1px solid #ccc";
+        div.style.padding = "1em";
+        div.style.marginBottom = "1em";
+
+        div.innerHTML = `
+          <h3>${data.title}</h3>
+          <p><strong>Prix :</strong> ${data.price} f</p>
+          <p><strong>Nombre de lectures :</strong> ${data.readCount || 0}</p>
+          <p><strong>Achats :</strong> ${data.buyCount || 0}</p>
+          <p><strong>Revenus :</strong> ${(data.buyCount || 0) * parseInt(data.price || 0)} f</p>
+          <button onclick="window.location.href='livre.html?id=${bookId}'">Voir</button>
+          <button onclick="deleteBook('${bookId}')">Supprimer</button>
+        `;
+
+        listDiv.appendChild(div);
+      });
+    }
+
+    async function deleteBook(bookId) {
+      if (confirm("Voulez-vous vraiment supprimer ce livre ?")) {
+        await deleteDoc(doc(db, "books", bookId));
+        alert("Livre supprimé.");
+        location.reload();
+      }
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadBooks(user.email);
+      } else {
+        alert("Tu dois être connecté.");
+        window.location.href = "login.html";
+      }
+    });
+
+    window.deleteBook = deleteBook;
+  </script>
+</body>
+</html>
