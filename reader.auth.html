@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inscription / Connexion Lecteur - Liaread</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+    h2 {
+      text-align: center;
+      color: #5a2a82;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    input[type="email"], input[type="password"] {
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #5a2a82;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #7b43c1;
+    }
+    .message {
+      margin-top: 15px;
+      color: red;
+      text-align: center;
+    }
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Inscription / Connexion Lecteur</h2>
+
+  <form id="auth-form">
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Mot de passe" required minlength="6" />
+    <button type="submit" id="signup-btn">S'inscrire</button>
+    <button type="button" id="login-btn">Se connecter</button>
+  </form>
+
+  <div class="message" id="message"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Firebase config - remplace avec ta config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDpaf3wdXkypPKH443SIZcJRFiz02s-t30",
+      authDomain: "liaread.firebaseapp.com",
+      projectId: "liaread",
+      storageBucket: "liaread.firebasestorage.app",
+      messagingSenderId: "951394019167",
+      appId: "1:951394019167:web:86825d5ebff4d77807f8ea",
+      measurementId: "G-63JN91LVV6"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const signupBtn = document.getElementById('signup-btn');
+    const loginBtn = document.getElementById('login-btn');
+    const messageDiv = document.getElementById('message');
+
+    // Inscription lecteur
+    signupBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!email || !password) {
+        messageDiv.textContent = 'Veuillez remplir tous les champs.';
+        return;
+      }
+
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // Ajouter dans Firestore avec role lecteur
+        await db.collection('users').doc(user.uid).set({
+          email: email,
+          role: 'reader',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        messageDiv.textContent = 'Inscription réussie ! Redirection...';
+        messageDiv.classList.remove('message');
+        messageDiv.classList.add('success');
+
+        // Rediriger vers tableau de bord lecteur
+        setTimeout(() => {
+          window.location.href = 'reader-dashboard.html';
+        }, 1500);
+      } catch (error) {
+        messageDiv.textContent = error.message;
+      }
+    });
+
+    // Connexion lecteur
+    loginBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!email || !password) {
+        messageDiv.textContent = 'Veuillez remplir tous les champs.';
+        return;
+      }
+
+      try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // Vérifier role en Firestore
+        const doc = await db.collection('users').doc(user.uid).get();
+        if (doc.exists && doc.data().role === 'reader') {
+          messageDiv.textContent = 'Connexion réussie ! Redirection...';
+          messageDiv.classList.remove('message');
+          messageDiv.classList.add('success');
+
+          setTimeout(() => {
+            window.location.href = 'reader-dashboard.html';
+          }, 1500);
+        } else {
+          messageDiv.textContent = "Ce compte n'est pas un lecteur autorisé.";
+          auth.signOut();
+        }
+      } catch (error) {
+        messageDiv.textContent = error.message;
+      }
+    });
+  </script>
+
+</body>
+</html>
