@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Liaread - Modération & Ajout Livres</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 20px auto; }
+    h1, h2 { color: #5a2d82; }
+    .comment-item, .book-item { margin-bottom: 20px; background: #f7f7f7; padding: 10px; border-radius: 5px; }
+    button { margin-right: 10px; padding: 5px 10px; cursor: pointer; }
+    #logout-btn { background: #d9534f; color: white; border: none; border-radius: 3px; }
+    form { background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 40px; }
+    label { display: block; margin-top: 10px; }
+    input[type="text"], input[type="number"], input[type="file"] {
+      width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box;
+    }
+    #add-book-btn { margin-top: 15px; background: #5a2d82; color: white; border: none; padding: 10px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+
+  <h1>Administration Liaread</h1>
+  <button id="logout-btn">Déconnexion</button>
+
+  <section>
+    <h2>Modération des commentaires</h2>
+    <div id="comments-container">Chargement des commentaires...</div>
+  </section>
+
+  <section>
+    <h2>Ajouter un nouveau livre</h2>
+    <form id="add-book-form">
+      <label for="title">Titre :</label>
+      <input type="text" id="title" required />
+
+      <label for="author">Auteur :</label>
+      <input type="text" id="author" required />
+
+      <label for="price">Prix (en FCFA) :</label>
+      <input type="number" id="price" min="0" required />
+
+      <label for="cover">Couverture (image) :</label>
+      <input type="file" id="cover" accept="image/*" required />
+
+      <label for="book-file">Fichier du livre (PDF ou EPUB) :</label>
+      <input type="file" id="book-file" accept=".pdf,.epub" required />
+
+      <button type="submit" id="add-book-btn">Ajouter le livre</button>
+    </form>
+    <p id="status-message"></p>
+  </section>
+
+  <script type="module">
+    import { auth, db, storage } from "./firebase.js";
+    import { signOut, onAuthStateChanged } from "firebase/auth";
+    import { collection, query, where, getDocs, doc, updateDoc, addDoc } from "firebase/firestore";
+    import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+    // --- Vérifier connexion admin ---
+    onAuthStateChanged(auth, user => {
+      if (!user || user.email !== "agodthanks@gmail.com") {
+        alert("Accès refusé, veuillez vous connecter en tant qu'admin.");
+        window.location.href = "login.html";
+      }
+    });
+
+    // --- Déconnexion ---
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      signOut(auth);
+      window.location.href = "login.html";
+    });
+
+    // --- Modération des commentaires ---
+    const commentsContainer = document.getElementById("comments-container");
+
+    async function loadComments() {
+      commentsContainer.textContent = "Chargement...";
+      const q = query(collection(db, "comments"), where("approved", "==", false));
+      const querySnapshot = await getDocs(q);
+      commentsContainer.innerHTML = "";
+
+      if (querySnapshot.empty) {
+        commentsContainer.textContent = "Aucun commentaire en attente.";
+        return;
+      }
+
+      querySnapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const div = document.createElement("div");
+        div.className = "comment-item";
+        div.innerHTML = `
+          <p><strong>${data.userName}</strong> sur <em>${data.bookTitle}</em> :</p>
+          <p>${data.text}</p>
+          <button class="approve-btn">Approuver</button>
+          <button class="delete-btn">Supprimer</button>
+        `;
+
+        div.querySelector(".approve-btn").onclick = async () => {
+          await updateDoc(doc(db, "comments", docSnap.id), { approved: true });
+          loadComments();
+        };
+        div.querySelector(".delete-btn").onclick = async () => {
+          await updateDoc(doc(db, "comments", docSnap.id), { deleted: true }); // Ou supprime avec deleteDoc si tu veux
+          loadComments();
+        };
+
+        commentsContainer.appendChild(div);
+      });
+    }
+
+    loadComments();
+
+    // --- Ajout livre ---
+    const addBookForm = document.getElementById("add-book-form");
+    const statusMessage = document.getElementById("status-message");
+
+    addBookForm.addEventListener("submit", async e => {
+      e.preventDefault();
+      statusMessage.textContent = "Ajout en cours...";
+
+      try {
+        const title = document.getElementById("title").value.trim();
+        const author = document.getElementById("author").value.trim();
+        const price = parseFloat(document.getElementById("price").value);
+        const coverFile = document.getElementById("cover").files[0];
+        const bookFile = document.getElementById("book-file").files[0];
+
+        if (!title || !author || !price || !coverFile || !bookFile) {
+          statusMessage.textContent = "Veuillez remplir tous les champs.";
+          return;
+        }
+
+        // Upload cover image
+        const coverRef = ref(storage, `covers/${Date.now()}_${coverFile.name}`);
+        await uploadBytes(coverRef, coverFile);
+        const coverURL = await getDownloadURL(coverRef);
+
+        // Upload book file
+        const bookRef = ref(storage, `books/${Date.now()}_${bookFile.name}`);
+        await uploadBytes(bookRef, bookFile);
+        const bookURL = await getDownloadURL(bookRef);
+
+        // Ajouter dans Firestore
+        await addDoc(collection(db, "books"), {
+          title,
+          author,
+          price,
+          coverURL,
+          bookURL,
+          createdAt: new Date(),
+          category: "Non défini" // tu peux ajouter un champ catégorie ici plus tard
+        });
+
+        statusMessage.textContent = "Livre ajouté avec succès !";
+        addBookForm.reset();
+      } catch (error) {
+        console.error(error);
+        statusMessage.textContent = "Erreur lors de l'ajout du livre : " + error.message;
+      }
+    });
+  </script>
+
+</body>
+</html>
