@@ -2,27 +2,57 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Connexion auteur - Liaread</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion Auteur – Liaread</title>
   <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="firebase.js"></script>
 </head>
 <body>
-  <main class="container">
-    <h1>Connexion auteur</h1>
+  <div class="container">
+    <h1>Connexion / Inscription Auteur</h1>
 
-    <form id="login-form">
-      <label for="login-email">Email :</label><br />
-      <input type="email" id="login-email" required /><br /><br />
+    <div id="form-section">
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Mot de passe" required />
+      
+      <button id="register">Créer un compte</button>
+      <button id="login">Se connecter</button>
 
-      <label for="login-password">Mot de passe :</label><br />
-      <input type="password" id="login-password" required /><br /><br />
+      <p id="message" style="margin-top: 1rem; color: red;"></p>
+    </div>
+  </div>
 
-      <button type="submit">Se connecter</button>
-    </form>
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    <p>Pas encore de compte ? <a href="signup.html">Crée un compte ici</a>.</p>
-  </main>
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const message = document.getElementById('message');
 
-  <script type="module" src="scripts/firebase-auth.js"></script>
+    document.getElementById('register').addEventListener('click', async () => {
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+        message.style.color = 'green';
+        message.textContent = "Compte créé avec succès ✅";
+        // Rediriger vers le dashboard après 1s
+        setTimeout(() => window.location.href = 'dashboard.html', 1000);
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    });
+
+    document.getElementById('login').addEventListener('click', async () => {
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+        message.style.color = 'green';
+        message.textContent = "Connexion réussie ✅";
+        // Rediriger vers le dashboard après 1s
+        setTimeout(() => window.location.href = 'dashboard.html', 1000);
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    });
+  </script>
 </body>
-  </html>
+        </html>
