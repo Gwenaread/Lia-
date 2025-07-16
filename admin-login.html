@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Connexion Admin Liaread</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; text-align: center; }
+    h1 { color: #5a2d82; }
+    input { width: 90%; padding: 10px; margin: 10px 0; font-size: 16px; }
+    button { padding: 10px 20px; background: #5a2d82; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .error { color: red; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>Connexion Admin</h1>
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="password" id="password" placeholder="Mot de passe" required />
+  <button id="login-btn">Se connecter</button>
+  <p class="error" id="error-msg"></p>
+
+  <script type="module">
+    import { auth } from "./firebase.js";
+    import { signInWithEmailAndPassword } from "firebase/auth";
+
+    const loginBtn = document.getElementById("login-btn");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const errorMsg = document.getElementById("error-msg");
+
+    loginBtn.addEventListener("click", async () => {
+      errorMsg.textContent = "";
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        errorMsg.textContent = "Veuillez remplir tous les champs.";
+        return;
+      }
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        if (userCredential.user.email === "agodthanks@gmail.com") {
+          window.location.href = "admin.html";
+        } else {
+          errorMsg.textContent = "Accès refusé : cet email n'a pas les droits admin.";
+          await auth.signOut();
+        }
+      } catch (error) {
+        errorMsg.textContent = "Erreur : " + error.message;
+      }
+    });
+  </script>
+
+</body>
+    </html>
