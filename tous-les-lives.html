@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tous les livres - Liaread</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="firebase.js"></script>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="tous-les-livres.html" class="active">Tous les livres</a>
+      <a href="connexion.html">Connexion</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <h1>Tous les livres</h1>
+
+      <div class="search-filter">
+        <input type="text" id="searchInput" placeholder="Rechercher par titre ou auteur..." />
+        <select id="categoryFilter">
+          <option value="">Toutes les catégories</option>
+          <option value="Roman">Roman</option>
+          <option value="Poème">Poème</option>
+          <option value="BD">Bande dessinée</option>
+        </select>
+      </div>
+
+      <div id="booksContainer" class="book-list"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Liaread &copy; 2025 - Lire, c’est rêver éveillé 📖</p>
+    <p>Contact WhatsApp : <a href="https://wa.me/2290199616039" target="_blank">+2290199616039</a></p>
+  </footer>
+
+  <script type="module">
+    import { db, collection, getDocs } from "./firebase.js";
+
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const booksContainer = document.getElementById("booksContainer");
+
+    let books = [];
+
+    async function fetchBooks() {
+      const querySnapshot = await getDocs(collection(db, "livres"));
+      books = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderBooks();
+    }
+
+    function renderBooks() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const selectedCategory = categoryFilter.value;
+      booksContainer.innerHTML = "";
+
+      const filtered = books.filter(book =>
+        (book.titre.toLowerCase().includes(searchTerm) ||
+         book.auteur.toLowerCase().includes(searchTerm)) &&
+        (selectedCategory === "" || book.categorie === selectedCategory)
+      );
+
+      if (filtered.length === 0) {
+        booksContainer.innerHTML = "<p>Aucun livre trouvé.</p>";
+        return;
+      }
+
+      filtered.forEach(book => {
+        const bookCard = document.createElement("div");
+        bookCard.classList.add("book-card");
+
+        bookCard.innerHTML = `
+          <img src="${book.couverture}" alt="${book.titre}" />
+          <h3>${book.titre}</h3>
+          <p><strong>Auteur :</strong> ${book.auteur}</p>
+          <p><strong>Prix :</strong> ${book.prix} F</p>
+          <p><strong>Catégorie :</strong> ${book.categorie || "Non définie"}</p>
+          <a href="livre.html?id=${book.id}" class="btn">Voir le livre</a>
+        `;
+        booksContainer.appendChild(bookCard);
+      });
+    }
+
+    searchInput.addEventListener("input", renderBooks);
+    categoryFilter.addEventListener("change", renderBooks);
+
+    fetchBooks();
+  </script>
+</body>
+    </html>
