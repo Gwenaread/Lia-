@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Détails du livre - Liaread</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="book-details">
+    <h1 id="book-title">Titre du livre</h1>
+    <p id="book-author">Auteur : ...</p>
+    <p id="book-price">Prix : ...</p>
+
+    <!-- Section commentaire -->
+    <div id="comment-section" class="comments">
+      <h2>Laisser un commentaire</h2>
+      <div id="comment-form-container" style="display: none;">
+        <form id="comment-form">
+          <label for="pseudo">Votre nom (ou pseudo) :</label><br>
+          <input type="text" id="pseudo" required><br><br>
+
+          <label for="note">Note (1 à 5) :</label><br>
+          <select id="note" required>
+            <option value="">-- Choisir une note --</option>
+            <option value="1">★☆☆☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="4">★★★★☆</option>
+            <option value="5">★★★★★</option>
+          </select><br><br>
+
+          <label for="commentaire">Votre commentaire :</label><br>
+          <textarea id="commentaire" rows="5" required></textarea><br><br>
+
+          <button type="submit">Envoyer</button>
+        </form>
+        <div id="comment-success" style="display:none; color: green; margin-top: 10px;">
+          Commentaire envoyé avec succès et en attente de validation !
+        </div>
+      </div>
+
+      <div id="login-prompt" style="display: none;">
+        <p>Connecte-toi pour laisser un commentaire.</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="livre.js"></script>
+
+</body>
+        </html>
