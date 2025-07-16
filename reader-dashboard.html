@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tableau de bord Lecteur - Liaread</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    h1 {
+      color: #5a2a82;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .welcome {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+    .logout {
+      background-color: #5a2a82;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      float: right;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .logout:hover {
+      background-color: #7b43c1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="logout" onclick="logout()">Se déconnecter</button>
+    <h1>Bienvenue sur Liaread 📚</h1>
+    <p class="welcome" id="user-info">Chargement des informations...</p>
+    <p>Tu peux parcourir les livres disponibles depuis la page d’accueil.</p>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDpaf3wdXkypPKH443SIZcJRFiz02s-t30",
+      authDomain: "liaread.firebaseapp.com",
+      projectId: "liaread",
+      storageBucket: "liaread.firebasestorage.app",
+      messagingSenderId: "951394019167",
+      appId: "1:951394019167:web:86825d5ebff4d77807f8ea",
+      measurementId: "G-63JN91LVV6"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const userInfo = document.getElementById("user-info");
+
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const doc = await db.collection('users').doc(user.uid).get();
+        if (doc.exists && doc.data().role === 'reader') {
+          userInfo.textContent = `Connecté en tant que : ${user.email}`;
+        } else {
+          alert("Accès non autorisé.");
+          auth.signOut().then(() => {
+            window.location.href = "reader-auth.html";
+          });
+        }
+      } else {
+        window.location.href = "reader-auth.html";
+      }
+    });
+
+    function logout() {
+      auth.signOut().then(() => {
+        window.location.href = "reader-auth.html";
+      });
+    }
+  </script>
+</body>
+</html>
