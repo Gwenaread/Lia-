@@ -2,176 +2,294 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Liaread - Accueil</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Liaread - Librairie en ligne</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f8f8ff;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
+      background-color: #fff;
+      color: #222;
     }
-
     header {
-      background-color: #5b2c6f;
+      background-color: #5a2a83;
       color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-
-    .categories {
+      padding: 1em;
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 1rem;
+      align-items: center;
+      justify-content: space-between;
     }
-
-    .category {
-      background-color: #ddd;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
+    header h1 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+    #search-bar {
+      width: 250px;
+      padding: 0.4em;
+      border-radius: 4px;
+      border: none;
+    }
+    button {
+      background-color: #7b49b7;
+      border: none;
+      color: white;
+      padding: 0.5em 1em;
       cursor: pointer;
-      transition: background 0.3s;
+      border-radius: 4px;
+      font-weight: bold;
     }
-
+    button:hover {
+      background-color: #622d9b;
+    }
+    main {
+      padding: 1em 2em;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    section {
+      margin-bottom: 2em;
+    }
+    h2 {
+      border-bottom: 2px solid #5a2a83;
+      padding-bottom: 0.3em;
+      margin-bottom: 1em;
+      color: #5a2a83;
+    }
+    .categories-list {
+      display: flex;
+      gap: 1em;
+      flex-wrap: wrap;
+    }
+    .category {
+      background-color: #e4d9f5;
+      padding: 0.5em 1em;
+      border-radius: 20px;
+      color: #5a2a83;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
     .category:hover {
-      background-color: #5b2c6f;
+      background-color: #d1bdf4;
+    }
+    .category.active {
+      background-color: #7b49b7;
       color: white;
     }
-
     .book-list {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      padding: 1rem;
+      grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
+      gap: 1em;
     }
-
     .book-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 1em;
+      box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 1rem;
+      justify-content: space-between;
     }
-
     .book-card img {
-      max-width: 180px;
-      border-radius: 8px;
+      max-width: 100%;
+      border-radius: 4px;
+      margin-bottom: 0.8em;
     }
-
     .book-info {
-      text-align: center;
-      margin-top: 0.5rem;
+      flex-grow: 1;
     }
-
     .book-title {
       font-weight: bold;
-      font-size: 1.1rem;
+      margin-bottom: 0.3em;
+      font-size: 1.1em;
     }
-
     .book-author {
+      font-style: italic;
+      margin-bottom: 0.6em;
       color: #555;
     }
-
     .book-price {
-      color: #000;
-      margin: 0.5rem 0;
+      color: #7b49b7;
+      font-weight: bold;
+      margin-bottom: 0.8em;
     }
-
-    .btn-pay {
-      background-color: #5b2c6f;
+    footer {
+      background-color: #5a2a83;
       color: white;
-      padding: 0.4rem 0.8rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      padding: 1em 2em;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      font-size: 0.9em;
     }
-
-    .btn-pay:hover {
-      background-color: #7d3c98;
+    footer div {
+      max-width: 400px;
+      margin-bottom: 1em;
+    }
+    a {
+      color: #d1bdf4;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    @media(max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      #search-bar {
+        margin-top: 0.5em;
+        width: 100%;
+      }
+      footer {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Bienvenue sur Liaread</h1>
+  <h1>Liaread</h1>
+  <input type="search" id="search-bar" placeholder="Rechercher un livre..." />
+  <button id="btn-create-author">Créer un compte auteur</button>
+  <button id="btn-create-reader" style="margin-left: 10px;">Créer un compte lecteur</button>
 </header>
 
-<section class="categories">
-  <div class="category" data-category="tous">Tous</div>
-  <div class="category" data-category="roman">Roman</div>
-  <div class="category" data-category="poesie">Poésie</div>
-  <div class="category" data-category="science-fiction">Science-fiction</div>
-  <div class="category" data-category="thriller">Thriller</div>
-  <div class="category" data-category="fantastique">Fantastique</div>
-  <div class="category" data-category="bd">BD</div>
-  <div class="category" data-category="nouvelles">Nouvelles</div>
-  <div class="category" data-category="contes">Contes</div>
-  <div class="category" data-category="romance">Romance</div>
-</section>
+<main>
 
-<section class="book-list">
-  <article class="book-card" data-category="roman">
-    <img src="https://via.placeholder.com/180x240?text=Aime+Moi" alt="Aime Moi" />
-    <div class="book-info">
-      <div class="book-title">Aime moi</div>
-      <div class="book-author">GwenA</div>
-      <div class="book-price">2500F</div>
-      <button class="btn-pay" data-book="Aime moi" data-amount="2500">Payer maintenant</button>
+  <section id="categories">
+    <h2>Catégories</h2>
+    <div class="categories-list">
+      <div class="category active" data-filter="all">Tous</div>
+      <div class="category" data-filter="nouvelles">Nouvelles</div>
+      <div class="category" data-filter="contes">Contes</div>
+      <div class="category" data-filter="romance">Romance</div>
+      <div class="category" data-filter="loup-garou-vampire">Loup-garou/Vampire</div>
     </div>
-  </article>
+  </section>
 
-  <article class="book-card" data-category="nouvelles">
-    <img src="https://via.placeholder.com/180x240?text=Nouvelles" alt="Nuits d’encre" />
-    <div class="book-info">
-      <div class="book-title">Nuits d’encre</div>
-      <div class="book-author">GwenA</div>
-      <div class="book-price">1500F</div>
-      <button class="btn-pay" data-book="Nuits d’encre" data-amount="1500">Payer maintenant</button>
+  <section id="books">
+    <h2>Livres populaires</h2>
+    <div class="book-list">
+      <article class="book-card" data-category="nouvelles">
+        <img src="https://via.placeholder.com/180x240?text=Aime+Moi" alt="Couverture Aime Moi" />
+        <div class="book-info">
+          <div class="book-title">Aime moi</div>
+          <div class="book-author">GwenA</div>
+          <div class="book-price">2500F</div>
+          <button class="btn-pay" data-book="Aime moi" data-amount="2500">Payer maintenant</button>
+        </div>
+      </article>
+      <article class="book-card" data-category="romance">
+        <img src="https://via.placeholder.com/180x240?text=Le+Secret" alt="Couverture Le Secret" />
+        <div class="book-info">
+          <div class="book-title">Le Secret</div>
+          <div class="book-author">Auteur X</div>
+          <div class="book-price">3000F</div>
+          <button class="btn-pay" data-book="Le Secret" data-amount="3000">Payer maintenant</button>
+        </div>
+      </article>
+      <article class="book-card" data-category="contes">
+        <img src="https://via.placeholder.com/180x240?text=Histoires+de+Contes" alt="Couverture Histoires de Contes" />
+        <div class="book-info">
+          <div class="book-title">Histoires de Contes</div>
+          <div class="book-author">Auteur Y</div>
+          <div class="book-price">1500F</div>
+          <button class="btn-pay" data-book="Histoires de Contes" data-amount="1500">Payer maintenant</button>
+        </div>
+      </article>
+      <article class="book-card" data-category="loup-garou-vampire">
+        <img src="https://via.placeholder.com/180x240?text=Nuit+Sanglante" alt="Couverture Nuit Sanglante" />
+        <div class="book-info">
+          <div class="book-title">Nuit Sanglante</div>
+          <div class="book-author">Auteur Z</div>
+          <div class="book-price">3500F</div>
+          <button class="btn-pay" data-book="Nuit Sanglante" data-amount="3500">Payer maintenant</button>
+        </div>
+      </article>
     </div>
-  </article>
+  </section>
 
-  <article class="book-card" data-category="contes">
-    <img src="https://via.placeholder.com/180x240?text=Contes" alt="Contes du Bénin" />
-    <div class="book-info">
-      <div class="book-title">Contes du Bénin</div>
-      <div class="book-author">Auteur Local</div>
-      <div class="book-price">2000F</div>
-      <button class="btn-pay" data-book="Contes du Bénin" data-amount="2000">Payer maintenant</button>
-    </div>
-  </article>
+</main>
 
-  <article class="book-card" data-category="romance">
-    <img src="https://via.placeholder.com/180x240?text=Romance" alt="Lettres à toi" />
-    <div class="book-info">
-      <div class="book-title">Lettres à toi</div>
-      <div class="book-author">GwenA</div>
-      <div class="book-price">2800F</div>
-      <button class="btn-pay" data-book="Lettres à toi" data-amount="2800">Payer maintenant</button>
-    </div>
-  </article>
-</section>
+<footer>
+  <div>
+    <h3>À propos</h3>
+    <p>Liaread est une librairie en ligne dédiée à la promotion des auteurs africains et francophones.</p>
+  </div>
+  <div>
+    <h3>Contact</h3>
+    <p>WhatsApp : <a href="https://wa.me/2290199616039" target="_blank">+229 01 99 61 60 39</a></p>
+    <p>Email : <a href="mailto:agodthanks@gmail.com">agodthanks@gmail.com</a></p>
+  </div>
+</footer>
 
 <script>
-  document.querySelectorAll(".category").forEach(cat => {
-    cat.addEventListener("click", () => {
-      const selected = cat.getAttribute("data-category");
-      const books = document.querySelectorAll(".book-card");
-      books.forEach(book => {
-        if (selected === "tous" || book.getAttribute("data-category") === selected) {
-          book.style.display = "block";
-        } else {
-          book.style.display = "none";
-        }
-      });
+  // Redirections des boutons création compte
+  document.getElementById('btn-create-author').addEventListener('click', () => {
+    window.location.href = 'author-login.html';
+  });
+
+  document.getElementById('btn-create-reader').addEventListener('click', () => {
+    window.location.href = 'reader-auth.html';
+  });
+
+  // Recherche livres par titre ou auteur
+  const searchInput = document.getElementById("search-bar");
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.toLowerCase();
+    const books = document.querySelectorAll(".book-card");
+    books.forEach(book => {
+      const title = book.querySelector(".book-title").textContent.toLowerCase();
+      const author = book.querySelector(".book-author").textContent.toLowerCase();
+      if ((title.includes(query) || author.includes(query)) && filterMatch(book)) {
+        book.style.display = "";
+      } else {
+        book.style.display = "none";
+      }
     });
   });
+
+  // Gestion filtre par catégorie
+  const categories = document.querySelectorAll('.category');
+  let currentFilter = 'all';
+
+  categories.forEach(cat => {
+    cat.addEventListener('click', () => {
+      // Changer la catégorie active visuellement
+      categories.forEach(c => c.classList.remove('active'));
+      cat.classList.add('active');
+
+      currentFilter = cat.getAttribute('data-filter');
+      filterBooks();
+    });
+  });
+
+  function filterMatch(book) {
+    if (currentFilter === 'all') return true;
+    return book.getAttribute('data-category') === currentFilter;
+  }
+
+  function filterBooks() {
+    const books = document.querySelectorAll(".book-card");
+    const query = searchInput.value.toLowerCase();
+
+    books.forEach(book => {
+      const title = book.querySelector(".book-title").textContent.toLowerCase();
+      const author = book.querySelector(".book-author").textContent.toLowerCase();
+
+      const matchesSearch = (title.includes(query) || author.includes(query));
+      const matchesCategory = filterMatch(book);
+
+      if (matchesSearch && matchesCategory) {
+        book.style.display = "";
+      } else {
+        book.style.display = "none";
+      }
+    });
+  }
 </script>
 
 </body>
