@@ -2,95 +2,164 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tableau de bord Lecteur - Liaread</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liaread - Tableau de bord Lecteur</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      padding: 20px;
+      background-color: #f8f9fa;
     }
-    h1 {
-      color: #5a2a82;
+    .sidebar {
+      height: 100vh;
+      background-color: #4B0082;
+      padding-top: 20px;
+      color: white;
     }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: white;
-      padding: 20px;
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 10px 20px;
+    }
+    .sidebar a:hover {
+      background-color: #6a0dad;
+    }
+    .book-card {
+      border: 1px solid #ddd;
       border-radius: 10px;
-    }
-    .welcome {
-      font-size: 1.2em;
+      padding: 15px;
+      background-color: white;
       margin-bottom: 20px;
     }
-    .logout {
-      background-color: #5a2a82;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      float: right;
-      border-radius: 5px;
+    .stars i {
+      color: #ccc;
       cursor: pointer;
     }
-    .logout:hover {
-      background-color: #7b43c1;
+    .stars i.active {
+      color: gold;
+    }
+    footer {
+      background-color: #4B0082;
+      color: white;
+      padding: 20px;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-md-3 sidebar">
+        <h3 class="text-center">👤 Lecteur</h3>
+        <a href="#">🏠 Accueil</a>
+        <a href="#">📚 Mes Livres</a>
+        <a href="#">⚙️ Mon Compte</a>
+        <a href="#" onclick="logout()">🚪 Déconnexion</a>
+      </div>
 
-  <div class="container">
-    <button class="logout" onclick="logout()">Se déconnecter</button>
-    <h1>Bienvenue sur Liaread 📚</h1>
-    <p class="welcome" id="user-info">Chargement des informations...</p>
-    <p>Tu peux parcourir les livres disponibles depuis la page d’accueil.</p>
+      <!-- Main content -->
+      <div class="col-md-9 p-4">
+        <h2 class="mb-4">📚 Mes livres consultés</h2>
+        <div id="books-list"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <footer class="text-center">
+    <p><strong>À propos :</strong> Liaread est une plateforme de lecture africaine intuitive et inclusive.</p>
+    <p><strong>Contact Admin :</strong><br>Email : agodthanks@gmail.com<br>WhatsApp : +2290199616039</p>
+  </footer>
 
-  <script>
-    // Configuration Firebase
+  <!-- Firebase & Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, setDoc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyDpaf3wdXkypPKH443SIZcJRFiz02s-t30",
       authDomain: "liaread.firebaseapp.com",
       projectId: "liaread",
-      storageBucket: "liaread.firebasestorage.app",
+      storageBucket: "liaread.appspot.com",
       messagingSenderId: "951394019167",
       appId: "1:951394019167:web:86825d5ebff4d77807f8ea",
       measurementId: "G-63JN91LVV6"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getFirestore();
 
-    const userInfo = document.getElementById("user-info");
+    const booksList = document.getElementById("books-list");
 
-    auth.onAuthStateChanged(async (user) => {
+    function renderStars(bookId, currentRating = 0) {
+      let starsHTML = '<div class="stars" data-book="' + bookId + '">';
+      for (let i = 1; i <= 5; i++) {
+        starsHTML += `<i class="fa-star fa ${i <= currentRating ? 'fas active' : 'far'}" data-rating="${i}"></i>`;
+      }
+      starsHTML += '</div>';
+      return starsHTML;
+    }
+
+    function bookCardHTML(book, id, rating = 0, comment = "") {
+      return `
+        <div class="book-card">
+          <h5>${book.titre}</h5>
+          ${renderStars(id, rating)}
+          <textarea class="form-control mt-2" rows="2" placeholder="Laissez un commentaire...">${comment}</textarea>
+          <button class="btn btn-primary btn-sm mt-2" onclick="submitFeedback('${id}')">Publier</button>
+        </div>
+      `;
+    }
+
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const doc = await db.collection('users').doc(user.uid).get();
-        if (doc.exists && doc.data().role === 'reader') {
-          userInfo.textContent = `Connecté en tant que : ${user.email}`;
-        } else {
-          alert("Accès non autorisé.");
-          auth.signOut().then(() => {
-            window.location.href = "reader-auth.html";
-          });
-        }
+        const booksSnapshot = await getDocs(collection(db, "livres"));
+        booksSnapshot.forEach(async (docSnap) => {
+          const book = docSnap.data();
+          const bookId = docSnap.id;
+          const noteRef = doc(db, "livres", bookId, "notes", user.uid);
+          const noteSnap = await getDoc(noteRef);
+          const rating = noteSnap.exists() ? noteSnap.data().note : 0;
+          const comment = noteSnap.exists() ? noteSnap.data().commentaire : "";
+          booksList.innerHTML += bookCardHTML(book, bookId, rating, comment);
+        });
       } else {
-        window.location.href = "reader-auth.html";
+        window.location.href = "signup-lecteur.html";
       }
     });
 
-    function logout() {
-      auth.signOut().then(() => {
-        window.location.href = "reader-auth.html";
-      });
+    window.submitFeedback = async function(bookId) {
+      const stars = document.querySelector(`.stars[data-book="${bookId}"] i.active`).dataset.rating;
+      const commentaire = document.querySelector(`.stars[data-book="${bookId}"]`).nextElementSibling.value;
+      const user = auth.currentUser;
+      if (user) {
+        await setDoc(doc(db, "livres", bookId, "notes", user.uid), {
+          note: parseInt(stars),
+          commentaire: commentaire,
+          date: new Date()
+        });
+        alert("Merci pour votre avis !");
+      }
+    }
+
+    document.addEventListener("click", function(e) {
+      if (e.target.classList.contains("fa-star")) {
+        const allStars = e.target.parentElement.querySelectorAll("i");
+        const rating = parseInt(e.target.dataset.rating);
+        allStars.forEach((star, i) => {
+          star.classList.toggle("active", i < rating);
+          star.classList.replace("far", "fas");
+        });
+      }
+    });
+
+    window.logout = () => {
+      signOut(auth).then(() => window.location.href = "index.html");
     }
   </script>
 </body>
-</html>
+  </html>
+                                  
