@@ -2,295 +2,169 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Liaread - Librairie en ligne</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      background-color: #fff;
-      color: #222;
-    }
-    header {
-      background-color: #5a2a83;
-      color: white;
-      padding: 1em;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 1.5em;
-    }
-    #search-bar {
-      width: 250px;
-      padding: 0.4em;
-      border-radius: 4px;
-      border: none;
-    }
-    button {
-      background-color: #7b49b7;
-      border: none;
-      color: white;
-      padding: 0.5em 1em;
-      cursor: pointer;
-      border-radius: 4px;
-      font-weight: bold;
-    }
-    button:hover {
-      background-color: #622d9b;
-    }
-    main {
-      padding: 1em 2em;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    section {
-      margin-bottom: 2em;
-    }
-    h2 {
-      border-bottom: 2px solid #5a2a83;
-      padding-bottom: 0.3em;
-      margin-bottom: 1em;
-      color: #5a2a83;
-    }
-    .categories-list {
-      display: flex;
-      gap: 1em;
-      flex-wrap: wrap;
-    }
-    .category {
-      background-color: #e4d9f5;
-      padding: 0.5em 1em;
-      border-radius: 20px;
-      color: #5a2a83;
-      font-weight: bold;
-      cursor: pointer;
-      user-select: none;
-    }
-    .category:hover {
-      background-color: #d1bdf4;
-    }
-    .category.active {
-      background-color: #7b49b7;
-      color: white;
-    }
-    .book-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
-      gap: 1em;
-    }
-    .book-card {
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 1em;
-      box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .book-card img {
-      max-width: 100%;
-      border-radius: 4px;
-      margin-bottom: 0.8em;
-    }
-    .book-info {
-      flex-grow: 1;
-    }
-    .book-title {
-      font-weight: bold;
-      margin-bottom: 0.3em;
-      font-size: 1.1em;
-    }
-    .book-author {
-      font-style: italic;
-      margin-bottom: 0.6em;
-      color: #555;
-    }
-    .book-price {
-      color: #7b49b7;
-      font-weight: bold;
-      margin-bottom: 0.8em;
-    }
-    footer {
-      background-color: #5a2a83;
-      color: white;
-      padding: 1em 2em;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      font-size: 0.9em;
-    }
-    footer div {
-      max-width: 400px;
-      margin-bottom: 1em;
-    }
-    a {
-      color: #d1bdf4;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    @media(max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      #search-bar {
-        margin-top: 0.5em;
-        width: 100%;
-      }
-      footer {
-        flex-direction: column;
-      }
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Liaread - Accueil</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-<header>
-  <h1>Liaread</h1>
-  <input type="search" id="search-bar" placeholder="Rechercher un livre..." />
-  <button id="btn-create-author">Créer un compte auteur</button>
-  <button id="btn-create-reader" style="margin-left: 10px;">Créer un compte lecteur</button>
-</header>
-
-<main>
-
-  <section id="categories">
-    <h2>Catégories</h2>
-    <div class="categories-list">
-      <div class="category active" data-filter="all">Tous</div>
-      <div class="category" data-filter="nouvelles">Nouvelles</div>
-      <div class="category" data-filter="contes">Contes</div>
-      <div class="category" data-filter="romance">Romance</div>
-      <div class="category" data-filter="loup-garou-vampire">Loup-garou/Vampire</div>
+  <header>
+    <h1>Liaread</h1>
+    <input type="text" id="search-bar" placeholder="Rechercher un livre..." />
+    <div>
+      <button onclick="window.location.href='author-signup.html'">Créer un compte auteur</button>
+      <button onclick="window.location.href='reader-auth.html'">Créer un compte lecteur</button>
     </div>
-  </section>
+  </header>
 
-  <section id="books">
-    <h2>Livres populaires</h2>
-    <div class="book-list">
-      <article class="book-card" data-category="nouvelles">
-        <img src="https://via.placeholder.com/180x240?text=Aime+Moi" alt="Couverture Aime Moi" />
-        <div class="book-info">
-          <div class="book-title">Aime moi</div>
-          <div class="book-author">GwenA</div>
-          <div class="book-price">2500F</div>
-          <button class="btn-pay" data-book="Aime moi" data-amount="2500">Payer maintenant</button>
+  <main>
+    <section>
+      <h2>Catégories</h2>
+      <div class="categories-list">
+        <div class="category" data-category="gratuit">Gratuit</div>
+        <div class="category" data-category="populaire">Populaire</div>
+        <div class="category" data-category="romance">Romance</div>
+        <div class="category" data-category="aventure">Aventure</div>
+        <div class="category" data-category="science-fiction">Science-fiction</div>
+        <div class="category" data-category="fantasy">Fantasy</div>
+        <div class="category" data-category="nouvelles">Nouvelles</div>
+        <div class="category" data-category="contes">Contes</div>
+        <div class="category" data-category="loup-garou/vampire">Loup-garou/Vampire</div>
+        <div class="category" data-category="roman">Roman</div>
+        <div class="category" data-category="sciences occultes">Sciences occultes</div>
+        <div class="category" data-category="santé/beauté">Santé/Beauté</div>
+      </div>
+    </section>
+
+    <section id="book-section">
+      <h2>Tous les livres</h2>
+      <div class="book-list" id="book-list">
+
+        <!-- Livre fictif par catégorie -->
+
+        <div class="book-card" data-category="gratuit">
+          <img src="img/gratuit.jpg" alt="Gratuit" class="book-cover">
+          <h3>Le Commencement</h3>
+          <p>Auteur : Kofi B</p>
+          <p>Prix : Gratuit</p>
+          <button onclick="window.location.href='extrait.html'">Lire un extrait</button>
         </div>
-      </article>
-      <article class="book-card" data-category="romance">
-        <img src="https://via.placeholder.com/180x240?text=Le+Secret" alt="Couverture Le Secret" />
-        <div class="book-info">
-          <div class="book-title">Le Secret</div>
-          <div class="book-author">Auteur X</div>
-          <div class="book-price">3000F</div>
-          <button class="btn-pay" data-book="Le Secret" data-amount="3000">Payer maintenant</button>
+
+        <div class="book-card" data-category="populaire">
+          <img src="img/populaire.jpg" alt="Populaire" class="book-cover">
+          <h3>Secrets de l’ombre</h3>
+          <p>Auteur : Aïcha N.</p>
+          <p>Prix : 3000f</p>
+          <button onclick="window.location.href='extrait.html'">Lire un extrait</button>
+          <button onclick="window.location.href='payments.html'">Payer maintenant</button>
         </div>
-      </article>
-      <article class="book-card" data-category="contes">
-        <img src="https://via.placeholder.com/180x240?text=Histoires+de+Contes" alt="Couverture Histoires de Contes" />
-        <div class="book-info">
-          <div class="book-title">Histoires de Contes</div>
-          <div class="book-author">Auteur Y</div>
-          <div class="book-price">1500F</div>
-          <button class="btn-pay" data-book="Histoires de Contes" data-amount="1500">Payer maintenant</button>
+
+        <div class="book-card" data-category="romance">
+          <img src="img/romance.jpg" alt="Romance" class="book-cover">
+          <h3>Aime moi</h3>
+          <p>Auteur : GwenA</p>
+          <p>Prix : 2500f</p>
+          <button onclick="window.location.href='extrait.html'">Lire un extrait</button>
+          <button onclick="window.location.href='payments.html'">Payer maintenant</button>
         </div>
-      </article>
-      <article class="book-card" data-category="loup-garou-vampire">
-        <img src="https://via.placeholder.com/180x240?text=Nuit+Sanglante" alt="Couverture Nuit Sanglante" />
-        <div class="book-info">
-          <div class="book-title">Nuit Sanglante</div>
-          <div class="book-author">Auteur Z</div>
-          <div class="book-price">3500F</div>
-          <button class="btn-pay" data-book="Nuit Sanglante" data-amount="3500">Payer maintenant</button>
+
+        <div class="book-card" data-category="aventure">
+          <img src="img/aventure.jpg" alt="Aventure" class="book-cover">
+          <h3>Dans la jungle</h3>
+          <p>Auteur : Mamadou S.</p>
+          <p>Prix : 2000f</p>
+          <button onclick="window.location.href='extrait.html'">Lire un extrait</button>
+          <button onclick="window.location.href='payments.html'">Payer maintenant</button>
         </div>
-      </article>
+
+        <div class="book-card" data-category="science-fiction">
+          <img src="img/scifi.jpg" alt="Science-fiction" class="book-cover">
+          <h3>Les étoiles d’Ibadan</h3>
+          <p>Auteur : M. Cosmos</p>
+          <p>Prix : 4000f</p>
+          <button onclick="window.location.href='extrait.html'">Lire un extrait</button>
+          <button onclick="window.location.href='payments.html'">Payer maintenant</button>
+        </div>
+
+        <div class="book-card" data-category="fantasy">
+          <img src="img/fantasy.jpg" alt="Fantasy" class="book-cover">
+          <h3>La couronne oubliée</h3>
+          <p>Auteur : Soraya T.</p>
+          <p>Prix : 3500f</p>
+          <button onclick="window.location.href='extrait.html'">Lire un extrait</button>
+          <button onclick="window.location.href='payments.html'">Payer maintenant</button>
+        </div>
+
+        <div class="book-card" data-category="nouvelles">
+          <img src="img/nouvelles.jpg" alt="Nouvelles" class="book-cover">
+          <h3>Petits bouts de vie</h3>
+          <p>Auteur : Clarisse V.</p>
+          <p>Prix : 1500f</p>
+          <button onclick="window.location.href='extrait.html'">Lire un extrait</button>
+          <button onclick="window.location.href='payments.html'">Payer maintenant</button>
+        </div>
+
+        <div class="book-card" data-category="contes">
+          <img src="img/contes.jpg" alt="Contes" class="book-cover">
+          <h3>Les contes d’Afrique</h3>
+          <p>Auteur : Tonton Fable</p>
+          <p>Prix : 1800f</p>
+          <button onclick="window.location.href='extrait.html'">Lire un extrait</button>
+          <button onclick="window.location.href='payments.html'">Payer maintenant</button>
+        </div>
+
+        <div class="book-card" data-category="loup-garou/vampire">
+          <img src="img/loup-vamp.jpg" alt="Lune de Sang" class="book-cover">
+          <h3>Lune de Sang</h3>
+          <p>Auteur : A. Noctis</p>
+          <p>Prix : 3000f</p>
+          <button onclick="window.location.href='extrait.html'">Lire un extrait</button>
+          <button onclick="window.location.href='payments.html'">Payer maintenant</button>
+        </div>
+
+        <div class="book-card" data-category="roman">
+          <img src="img/roman.jpg" alt="Roman" class="book-cover">
+          <h3>Une saison d'espoir</h3>
+          <p>Auteur : L. Kanza</p>
+          <p>Prix : 2200f</p>
+          <button onclick="window.location.href='extrait.html'">Lire un extrait</button>
+          <button onclick="window.location.href='payments.html'">Payer maintenant</button>
+        </div>
+
+        <div class="book-card" data-category="sciences occultes">
+          <img src="img/occulte.jpg" alt="Sciences Occultes" class="book-cover">
+          <h3>Rituels interdits</h3>
+          <p>Auteur : D. Ébène</p>
+          <p>Prix : 3200f</p>
+          <button onclick="window.location.href='extrait.html'">Lire un extrait</button>
+          <button onclick="window.location.href='payments.html'">Payer maintenant</button>
+        </div>
+
+        <div class="book-card" data-category="santé/beauté">
+          <img src="img/beaute.jpg" alt="Santé Beauté" class="book-cover">
+          <h3>Secrets de beauté africaine</h3>
+          <p>Auteur : Khady Bio</p>
+          <p>Prix : 2500f</p>
+          <button onclick="window.location.href='extrait.html'">Lire un extrait</button>
+          <button onclick="window.location.href='payments.html'">Payer maintenant</button>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div>
+      <strong>À propos de Liaread</strong><br />
+      Liaread est une bibliothèque numérique africaine permettant aux auteurs de publier et vendre leurs livres en toute simplicité.
     </div>
-  </section>
+    <div>
+      <strong>Contact</strong><br />
+      WhatsApp : <a href="https://wa.me/2290199616039" target="_blank">+2290199616039</a><br />
+      Email : agodthanks@gmail.com
+    </div>
+  </footer>
 
-</main>
-
-<footer>
-  <div>
-    <h3>À propos</h3>
-    <p>Liaread est une librairie en ligne dédiée à la promotion des auteurs africains et francophones.</p>
-  </div>
-  <div>
-    <h3>Contact</h3>
-    <p>WhatsApp : <a href="https://wa.me/2290199616039" target="_blank">+229 01 99 61 60 39</a></p>
-    <p>Email : <a href="mailto:agodthanks@gmail.com">agodthanks@gmail.com</a></p>
-  </div>
-</footer>
-
-<script>
-  // Redirections des boutons création compte
-  document.getElementById('btn-create-author').addEventListener('click', () => {
-    window.location.href = 'author-login.html';
-  });
-
-  document.getElementById('btn-create-reader').addEventListener('click', () => {
-    window.location.href = 'reader-auth.html';
-  });
-
-  // Recherche livres par titre ou auteur
-  const searchInput = document.getElementById("search-bar");
-  searchInput.addEventListener("input", () => {
-    const query = searchInput.value.toLowerCase();
-    const books = document.querySelectorAll(".book-card");
-    books.forEach(book => {
-      const title = book.querySelector(".book-title").textContent.toLowerCase();
-      const author = book.querySelector(".book-author").textContent.toLowerCase();
-      if ((title.includes(query) || author.includes(query)) && filterMatch(book)) {
-        book.style.display = "";
-      } else {
-        book.style.display = "none";
-      }
-    });
-  });
-
-  // Gestion filtre par catégorie
-  const categories = document.querySelectorAll('.category');
-  let currentFilter = 'all';
-
-  categories.forEach(cat => {
-    cat.addEventListener('click', () => {
-      // Changer la catégorie active visuellement
-      categories.forEach(c => c.classList.remove('active'));
-      cat.classList.add('active');
-
-      currentFilter = cat.getAttribute('data-filter');
-      filterBooks();
-    });
-  });
-
-  function filterMatch(book) {
-    if (currentFilter === 'all') return true;
-    return book.getAttribute('data-category') === currentFilter;
-  }
-
-  function filterBooks() {
-    const books = document.querySelectorAll(".book-card");
-    const query = searchInput.value.toLowerCase();
-
-    books.forEach(book => {
-      const title = book.querySelector(".book-title").textContent.toLowerCase();
-      const author = book.querySelector(".book-author").textContent.toLowerCase();
-
-      const matchesSearch = (title.includes(query) || author.includes(query));
-      const matchesCategory = filterMatch(book);
-
-      if (matchesSearch && matchesCategory) {
-        book.style.display = "";
-      } else {
-        book.style.display = "none";
-      }
-    });
-  }
-</script>
-
+  <script src="firebase.js"></script>
+  <script src="index.js"></script>
 </body>
 </html>
