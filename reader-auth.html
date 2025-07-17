@@ -1,165 +1,159 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Inscription / Connexion Lecteur - Liaread</title>
+  <meta charset="UTF-8">
+  <title>Créer un compte lecteur - Liaread</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
+  <script src="/firebase.js"></script>
   <style>
+    /* Même style que signup-auteur */
     body {
-      font-family: Arial, sans-serif;
-      max-width: 400px;
-      margin: 50px auto;
-      padding: 20px;
-      background: #f9f9f9;
-      border-radius: 8px;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #5e2ca5, #000000);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
+
+    .container {
+      background-color: white;
+      color: black;
+      padding: 2rem;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+    }
+
     h2 {
       text-align: center;
-      color: #5a2a82;
+      color: #5e2ca5;
     }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    input[type="email"], input[type="password"] {
-      padding: 10px;
-      font-size: 1em;
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      font-size: 1rem;
     }
+
     button {
-      background-color: #5a2a82;
+      background-color: #5e2ca5;
       color: white;
+      font-weight: bold;
       border: none;
-      padding: 10px;
-      font-size: 1em;
-      border-radius: 4px;
-      cursor: pointer;
+      transition: background 0.3s ease;
     }
+
     button:hover {
-      background-color: #7b43c1;
+      background-color: #491f87;
     }
+
     .message {
-      margin-top: 15px;
-      color: red;
       text-align: center;
+      margin-top: 1rem;
+      font-size: 0.95rem;
     }
-    .success {
+
+    .message.success {
       color: green;
+    }
+
+    .message.error {
+      color: red;
+    }
+
+    .link {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      color: #5e2ca5;
+      text-decoration: none;
+    }
+
+    .link:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h2>Inscription Lecteur</h2>
+    <input type="email" id="email" placeholder="Adresse email" required>
+    <input type="password" id="password" placeholder="Mot de passe (min. 6 caractères)" required>
+    <button onclick="signupLecteur()">Créer mon compte</button>
+    <div id="message" class="message"></div>
+    <a href="connexion.html" class="link">Déjà inscrit ? Se connecter</a>
+  </div>
 
-  <h2>Inscription / Connexion Lecteur</h2>
+  <script type="module">
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-  <form id="auth-form">
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Mot de passe" required minlength="6" />
-    <button type="submit" id="signup-btn">S'inscrire</button>
-    <button type="button" id="login-btn">Se connecter</button>
-  </form>
+    const auth = getAuth();
+    const db = getFirestore();
 
-  <div class="message" id="message"></div>
+    async function signupLecteur() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const message = document.getElementById('message');
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-  <script>
-    // Firebase config - remplace avec ta config
-    const firebaseConfig = {
-      apiKey: "AIzaSyDpaf3wdXkypPKH443SIZcJRFiz02s-t30",
-      authDomain: "liaread.firebaseapp.com",
-      projectId: "liaread",
-      storageBucket: "liaread.firebasestorage.app",
-      messagingSenderId: "951394019167",
-      appId: "1:951394019167:web:86825d5ebff4d77807f8ea",
-      measurementId: "G-63JN91LVV6"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const signupBtn = document.getElementById('signup-btn');
-    const loginBtn = document.getElementById('login-btn');
-    const messageDiv = document.getElementById('message');
-
-    // Inscription lecteur
-    signupBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
+      message.textContent = "";
+      message.className = "message";
 
       if (!email || !password) {
-        messageDiv.textContent = 'Veuillez remplir tous les champs.';
+        message.textContent = "Veuillez remplir tous les champs.";
+        message.classList.add("error");
+        return;
+      }
+
+      if (password.length < 6) {
+        message.textContent = "Le mot de passe doit contenir au moins 6 caractères.";
+        message.classList.add("error");
         return;
       }
 
       try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Ajouter dans Firestore avec role lecteur
-        await db.collection('users').doc(user.uid).set({
-          email: email,
-          role: 'reader',
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        await setDoc(doc(db, "users", user.uid), {
+          email: user.email,
+          role: "lecteur",
+          createdAt: new Date()
         });
 
-        messageDiv.textContent = 'Inscription réussie ! Redirection...';
-        messageDiv.classList.remove('message');
-        messageDiv.classList.add('success');
+        message.textContent = "Bienvenue lecteur ! Redirection en cours...";
+        message.classList.add("success");
 
-        // Rediriger vers tableau de bord lecteur
         setTimeout(() => {
-          window.location.href = 'reader-dashboard.html';
-        }, 1500);
+          window.location.href = "lecteur-dashboard.html";
+        }, 2000);
       } catch (error) {
-        messageDiv.textContent = error.message;
-      }
-    });
-
-    // Connexion lecteur
-    loginBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
-
-      if (!email || !password) {
-        messageDiv.textContent = 'Veuillez remplir tous les champs.';
-        return;
-      }
-
-      try {
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-
-        // Vérifier role en Firestore
-        const doc = await db.collection('users').doc(user.uid).get();
-        if (doc.exists && doc.data().role === 'reader') {
-          messageDiv.textContent = 'Connexion réussie ! Redirection...';
-          messageDiv.classList.remove('message');
-          messageDiv.classList.add('success');
-
-          setTimeout(() => {
-            window.location.href = 'reader-dashboard.html';
-          }, 1500);
-        } else {
-          messageDiv.textContent = "Ce compte n'est pas un lecteur autorisé.";
-          auth.signOut();
+        let msg = "Une erreur est survenue.";
+        if (error.code === "auth/email-already-in-use") {
+          msg = "Cette adresse email est déjà utilisée.";
+        } else if (error.code === "auth/invalid-email") {
+          msg = "Adresse email invalide.";
+        } else if (error.code === "auth/weak-password") {
+          msg = "Mot de passe trop faible.";
         }
-      } catch (error) {
-        messageDiv.textContent = error.message;
-      }
-    });
-  </script>
 
+        message.textContent = msg;
+        message.classList.add("error");
+      }
+    }
+
+    window.signupLecteur = signupLecteur;
+  </script>
 </body>
-</html>
+  </html>
